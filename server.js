@@ -85,7 +85,14 @@ app.post("/login", async (req, res) => {
     return res.status(400).send("Invalid credentials");
 
   const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
-  res.json({ token });
+res.json({
+  token,
+  user: {
+    _id: user._id,
+    name: user.name,
+    email: user.email,
+  },
+});
 });
 
 app.post("/tasks", auth, async (req, res) => {
