@@ -10,10 +10,8 @@ const nodemailer = require("nodemailer");
 const app = express();
 const cors = require("cors");
 
-app.use(cors({
-  origin: "https://splendorous-smakager-a80550.netlify.app/",
-  credentials: true  // Include this if you’re sending cookies or auth headers
-}));
+app.use(cors({ origin: "*" }));
+
 
 app.use(express.json());
 
