@@ -72,7 +72,7 @@ function auth(req, res, next) {
 
 // Routes
 
-app.post("/register", async (req, res) => {
+app.post("/", async (req, res) => {
   const { name, email, password } = req.body;
   if (!name || !email || !password) return res.status(400).send("All fields required");
   const existing = await User.findOne({ email });
