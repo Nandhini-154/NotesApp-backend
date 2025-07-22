@@ -2,7 +2,7 @@ require("dotenv").config(); // <-- Add at the very top
 
 const express = require("express");
 const mongoose = require("mongoose");
-const cors = require("cors");
+
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const nodemailer = require("nodemailer");
