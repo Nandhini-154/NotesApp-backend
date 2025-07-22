@@ -8,7 +8,13 @@ const bcrypt = require("bcryptjs");
 const nodemailer = require("nodemailer");
 
 const app = express();
-app.use(cors());
+const cors = require("cors");
+
+app.use(cors({
+  origin: "https://incomparable-gingersnap-bd4709.netlify.app",
+  credentials: true  // Include this if you’re sending cookies or auth headers
+}));
+
 app.use(express.json());
 
 // DB Connection
