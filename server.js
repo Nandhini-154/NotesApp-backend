@@ -11,7 +11,7 @@ const app = express();
 const cors = require("cors");
 
 app.use(cors({
-  origin: "https://incomparable-gingersnap-bd4709.netlify.app",
+  origin: "https://splendorous-smakager-a80550.netlify.app/",
   credentials: true  // Include this if you’re sending cookies or auth headers
 }));
 
