@@ -2,16 +2,18 @@ require("dotenv").config(); // <-- Add at the very top
 
 const express = require("express");
 const mongoose = require("mongoose");
-
+const cors = require("cors");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const nodemailer = require("nodemailer");
 
 const app = express();
-const cors = require("cors");
 
-app.use(cors({ origin: "*" }));
 
+app.use(cors({
+  origin: "*",
+  credentials: true  // Include this if you’re sending cookies or auth headers
+}));
 
 app.use(express.json());
 
@@ -72,7 +74,7 @@ function auth(req, res, next) {
 
 // Routes
 
-app.post("/", async (req, res) => {
+app.post("/register", async (req, res) => {
   const { name, email, password } = req.body;
   if (!name || !email || !password) return res.status(400).send("All fields required");
   const existing = await User.findOne({ email });
@@ -89,14 +91,7 @@ app.post("/login", async (req, res) => {
     return res.status(400).send("Invalid credentials");
 
   const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
-res.json({
-  token,
-  user: {
-    _id: user._id,
-    name: user.name,
-    email: user.email,
-  },
-});
+  res.json({ token });
 });
 
 app.post("/tasks", auth, async (req, res) => {
@@ -120,22 +115,24 @@ app.get("/tasks", auth, async (req, res) => {
 });
 
 app.put("/tasks/:id", auth, async (req, res) => {
-  const { title, deadline } = req.body;
-  if (!title || !deadline) return res.status(400).send("Title and deadline required");
+  const updates = req.body;
 
-  const today = new Date().setHours(0, 0, 0, 0);
-  const taskDate = new Date(deadline).setHours(0, 0, 0, 0);
-  if (taskDate < today) return res.status(400).send("Deadline cannot be in the past");
+  if (updates.deadline) {
+    const today = new Date().setHours(0, 0, 0, 0);
+    const taskDate = new Date(updates.deadline).setHours(0, 0, 0, 0);
+    if (taskDate < today) return res.status(400).send("Deadline cannot be in the past");
+  }
 
   const task = await Task.findOneAndUpdate(
     { _id: req.params.id, userId: req.user.id },
-    req.body,
+    updates,
     { new: true }
   );
 
   if (!task) return res.status(404).send("Task not found");
   res.json(task);
 });
+
 
 app.delete("/tasks/:id", auth, async (req, res) => {
   const task = await Task.findOneAndDelete({ _id: req.params.id, userId: req.user.id });
